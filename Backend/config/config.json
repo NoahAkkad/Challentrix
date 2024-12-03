@@ -1,8 +1,22 @@
 {
   "development": {
-    "username": "admin",
+    "username": "postgres",
     "password": "admin",
-    "database": "challentrix",
+    "database": "nodeTest",
+    "host": "127.0.0.1",
+    "dialect": "postgres"
+  },
+  "test": {
+    "username": "postgres",
+    "password": "admin",
+    "database": "nodeTest",
+    "host": "127.0.0.1",
+    "dialect": "postgres"
+  },
+  "production": {
+    "username": "postgres",
+    "password": "admin",
+    "database": "nodeTest",
     "host": "127.0.0.1",
     "dialect": "postgres"
   }
