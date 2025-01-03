@@ -1,7 +1,7 @@
 const express = require('express')
 const passport = require('passport')
 //for gmail auth requirement
-require('../middleware/passport')
+require('../middleware/gmail_passport')
 
 const router = express.Router()
 
