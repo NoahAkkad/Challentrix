@@ -4,6 +4,7 @@ const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
 const nodemailer = require('nodemailer')
 const User = require('../models/User')
+const Admin = require('../models/Admin')
 const Verification = require('../models/Verification')
 
 const router = express.Router()
@@ -59,23 +60,37 @@ router.post('/register', async (req, res) => {
 })
 
 router.post('/login', async (req, res) => {
-    const { email, password } = req.body
+    const { email, password , role } = req.body
 
-    try {
-        const user = await User.findOne({ where: { email } })
-        if (!user || !(await bcrypt.compare(password, user.password))) {
-            return res.status(401).json({ message: 'Invalid credentials' })
+    if(role){
+        try {
+            const admin = await Admin.findOne({ where: { email } })
+            if (!admin || !(await bcrypt.compare(password, admin.password))) {
+                return res.status(401).json({ message: 'Invalid credentials' })
+            }
+            const token = jwt.sign({ id: admin.id , role: admin.role }, process.env.JWT_SECRET, { expiresIn: '1h' })
+            return res.status(200).json({ message: 'Login successful', token })
+        } catch (error) {
+            return res.status(500).json({ message: 'Login failed', error })
         }
-
-        if (!user.isVerified) {
-            return res.status(403).json({ message: 'Email is not verified' })
+    }
+    else{
+        try {
+            const user = await User.findOne({ where: { email } })
+            if (!user || !(await bcrypt.compare(password, user.password))) {
+                return res.status(401).json({ message: 'Invalid credentials' })
+            }
+    
+            if (!user.isVerified) {
+                return res.status(403).json({ message: 'Email is not verified' })
+            }
+    
+            const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, { expiresIn: '1h' })
+            return res.status(200).json({ message: 'Login successful', token })
+        } catch (error) {
+            console.error(error)
+            return res.status(500).json({ message: 'Login failed', error })
         }
-
-        const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, { expiresIn: '1h' })
-        return res.status(200).json({ message: 'Login successful', token })
-    } catch (error) {
-        console.error(error)
-        return res.status(500).json({ message: 'Login failed', error })
     }
 })
 
