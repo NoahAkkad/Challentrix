@@ -1,5 +1,5 @@
 
-const errorHandler = (err, req, res, next) => {
+const ErrorHandler = (err, req, res, next) => {
     console.error(err.stack)
 
     const statusCode = err.statusCode || 500
@@ -12,4 +12,4 @@ const errorHandler = (err, req, res, next) => {
     })
 }
 
-module.exports = errorHandler
+module.exports = {ErrorHandler}
